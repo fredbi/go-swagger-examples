@@ -44,7 +44,6 @@ This software ships under the [SPDX-License-Identifier: Apache-2.0](./LICENSE).
 
 * [All-time contributors](./CONTRIBUTORS.md)
 * [Contributing guidelines](.github/CONTRIBUTING.md)
-* [Maintainers documentation](docs/MAINTAINERS.md)
 * [Code style](docs/STYLE.md)
 
 <!-- Badges: status  -->

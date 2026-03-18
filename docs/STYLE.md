@@ -113,5 +113,5 @@ When this is possible, we enable linters with relaxed constraints.
 Final note: since we have switched to a forked version of `stretchr/testify`,
 we no longer benefit from the great `testifylint` linter for tests.
 
-[golangci-yml]: https://github.com/go-swagger/go-swagger/blob/master/.golangci.yml
+[golangci-yml]: https://github.com/go-swagger/examples/blob/master/.golangci.yml
 [golangci-doc]: https://golangci-lint.run/docs/linters/configuration/
