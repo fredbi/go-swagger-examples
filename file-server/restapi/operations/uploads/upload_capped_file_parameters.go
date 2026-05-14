@@ -12,36 +12,37 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// UploadFileMaxParseMemory sets the maximum size in bytes for
+// UploadCappedFileMaxParseMemory sets the maximum size in bytes for
 // the multipart form parser for this operation.
 //
 // The default value is 32 MB.
 // The multipart parser stores up to this + 10MB.
-var UploadFileMaxParseMemory int64 = 32 << 20
+var UploadCappedFileMaxParseMemory int64 = 32 << 20
 
-// UploadFileMaxBodySize caps the size of the form body.
+// UploadCappedFileMaxBodySize caps the size of the form body.
 //
 // The default value is 32 MB. Larger bodies will error with http status 413.
-var UploadFileMaxBodySize int64 = 32 << 20
+var UploadCappedFileMaxBodySize int64 = 32 << 20
 
-// NewUploadFileParams creates a new UploadFileParams object
+// NewUploadCappedFileParams creates a new UploadCappedFileParams object
 //
 // There are no default values defined in the spec.
-func NewUploadFileParams() UploadFileParams {
+func NewUploadCappedFileParams() UploadCappedFileParams {
 
-	return UploadFileParams{}
+	return UploadCappedFileParams{}
 }
 
-// UploadFileParams contains all the bound params for the upload file operation
+// UploadCappedFileParams contains all the bound params for the upload capped file operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters uploadFile
-type UploadFileParams struct {
+// swagger:parameters uploadCappedFile
+type UploadCappedFileParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  Required: true
+	  Max Length: 1024
 	  In: formData
 	*/
 	File io.ReadCloser
@@ -50,14 +51,14 @@ type UploadFileParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewUploadFileParams() beforehand.
-func (o *UploadFileParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewUploadCappedFileParams() beforehand.
+func (o *UploadCappedFileParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 	isBlocking, err := runtime.BindForm(r,
-		runtime.BindFormMaxParseMemory(UploadFileMaxParseMemory),
-		runtime.BindFormMaxBody(UploadFileMaxBodySize),
+		runtime.BindFormMaxParseMemory(UploadCappedFileMaxParseMemory),
+		runtime.BindFormMaxBody(UploadCappedFileMaxBodySize),
 		runtime.BindFormFile("file", true, o.bindFile),
 	)
 	if err != nil {
@@ -77,7 +78,18 @@ func (o *UploadFileParams) BindRequest(r *http.Request, route *middleware.Matche
 // bindFile validates file parameter File1 and assigns it as a *runtime.File on success.
 //
 // The only supported validations on files are MinLength and MaxLength
-func (o *UploadFileParams) bindFile(file multipart.File, header *multipart.FileHeader) error {
+func (o *UploadCappedFileParams) bindFile(file multipart.File, header *multipart.FileHeader) error {
+	size, err := file.Seek(0, io.SeekEnd)
+	if err != nil {
+		return errors.New(http.StatusInternalServerError, "%s: %v", "file", err)
+	}
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return errors.New(http.StatusInternalServerError, "%s: %v", "file", err)
+	}
+	if size > 1024 {
+		return errors.ExceedsMaximum("file", "formData", 1024, false, size)
+	}
 
 	o.File = &runtime.File{Data: file, Header: header}
 	return nil

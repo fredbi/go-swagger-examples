@@ -70,6 +70,11 @@ func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
 	r.ConsumesMediaTypes = []string{"application/json"}
 }
 
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
 // WithContentTypeMultipartFormData sets the Content-Type header to "multipart/form-data".
 func WithContentTypeMultipartFormData(r *runtime.ClientOperation) {
 	r.ConsumesMediaTypes = []string{"multipart/form-data"}
@@ -77,9 +82,58 @@ func WithContentTypeMultipartFormData(r *runtime.ClientOperation) {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	UploadCappedFile(params *UploadCappedFileParams, opts ...ClientOption) (*UploadCappedFileOK, error)
+
 	UploadFile(params *UploadFileParams, opts ...ClientOption) (*UploadFileOK, error)
 
+	UploadFiles(params *UploadFilesParams, opts ...ClientOption) (*UploadFilesOK, error)
+
+	UploadURLEncoded(params *UploadURLEncodedParams, opts ...ClientOption) (*UploadURLEncodedOK, error)
+
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+UploadCappedFile uploads
+*/
+func (a *Client) UploadCappedFile(params *UploadCappedFileParams, opts ...ClientOption) (*UploadCappedFileOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewUploadCappedFileParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "uploadCappedFile",
+		Method:             "POST",
+		PathPattern:        "/upload-capped",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"multipart/form-data"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &UploadCappedFileReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*UploadCappedFileOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for uploadCappedFile: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -122,6 +176,92 @@ func (a *Client) UploadFile(params *UploadFileParams, opts ...ClientOption) (*Up
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for uploadFile: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+UploadFiles uploads
+*/
+func (a *Client) UploadFiles(params *UploadFilesParams, opts ...ClientOption) (*UploadFilesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewUploadFilesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "uploadFiles",
+		Method:             "POST",
+		PathPattern:        "/upload-multiple",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"multipart/form-data"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &UploadFilesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*UploadFilesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for uploadFiles: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+UploadURLEncoded uploads
+*/
+func (a *Client) UploadURLEncoded(params *UploadURLEncodedParams, opts ...ClientOption) (*UploadURLEncodedOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewUploadURLEncodedParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "uploadURLEncoded",
+		Method:             "POST",
+		PathPattern:        "/urlencoded-form",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/x-www-form-urlencoded"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &UploadURLEncodedReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*UploadURLEncodedOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for uploadURLEncoded: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

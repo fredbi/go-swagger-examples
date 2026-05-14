@@ -39,13 +39,32 @@ func NewFileUploadAPI(spec *loads.Document) *FileUploadAPI {
 
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
+		UrlformConsumer:       runtime.DiscardConsumer,
 
 		JSONProducer: runtime.JSONProducer(),
+
+		UploadsUploadCappedFileHandler: uploads.UploadCappedFileHandlerFunc(func(params uploads.UploadCappedFileParams) middleware.Responder {
+			_ = params
+
+			return middleware.NotImplemented("operation uploads.UploadCappedFile has not yet been implemented")
+		}),
 
 		UploadsUploadFileHandler: uploads.UploadFileHandlerFunc(func(params uploads.UploadFileParams) middleware.Responder {
 			_ = params
 
 			return middleware.NotImplemented("operation uploads.UploadFile has not yet been implemented")
+		}),
+
+		UploadsUploadFilesHandler: uploads.UploadFilesHandlerFunc(func(params uploads.UploadFilesParams) middleware.Responder {
+			_ = params
+
+			return middleware.NotImplemented("operation uploads.UploadFiles has not yet been implemented")
+		}),
+
+		UploadsUploadURLEncodedHandler: uploads.UploadURLEncodedHandlerFunc(func(params uploads.UploadURLEncodedParams) middleware.Responder {
+			_ = params
+
+			return middleware.NotImplemented("operation uploads.UploadURLEncoded has not yet been implemented")
 		}),
 	}
 }
@@ -81,13 +100,22 @@ type FileUploadAPI struct {
 	// MultipartformConsumer registers a consumer for the following mime types:
 	//   - multipart/form-data
 	MultipartformConsumer runtime.Consumer
+	// UrlformConsumer registers a consumer for the following mime types:
+	//   - application/x-www-form-urlencoded
+	UrlformConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
 
+	// UploadsUploadCappedFileHandler sets the operation handler for the upload capped file operation
+	UploadsUploadCappedFileHandler uploads.UploadCappedFileHandler
 	// UploadsUploadFileHandler sets the operation handler for the upload file operation
 	UploadsUploadFileHandler uploads.UploadFileHandler
+	// UploadsUploadFilesHandler sets the operation handler for the upload files operation
+	UploadsUploadFilesHandler uploads.UploadFilesHandler
+	// UploadsUploadURLEncodedHandler sets the operation handler for the upload URL encoded operation
+	UploadsUploadURLEncodedHandler uploads.UploadURLEncodedHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -163,13 +191,25 @@ func (o *FileUploadAPI) Validate() error {
 	if o.MultipartformConsumer == nil {
 		unregistered = append(unregistered, "MultipartformConsumer")
 	}
+	if o.UrlformConsumer == nil {
+		unregistered = append(unregistered, "UrlformConsumer")
+	}
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.UploadsUploadCappedFileHandler == nil {
+		unregistered = append(unregistered, "uploads.UploadCappedFileHandler")
+	}
 	if o.UploadsUploadFileHandler == nil {
 		unregistered = append(unregistered, "uploads.UploadFileHandler")
+	}
+	if o.UploadsUploadFilesHandler == nil {
+		unregistered = append(unregistered, "uploads.UploadFilesHandler")
+	}
+	if o.UploadsUploadURLEncodedHandler == nil {
+		unregistered = append(unregistered, "uploads.UploadURLEncodedHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -205,6 +245,8 @@ func (o *FileUploadAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Con
 			result["application/json"] = o.JSONConsumer
 		case "multipart/form-data":
 			result["multipart/form-data"] = o.MultipartformConsumer
+		case "application/x-www-form-urlencoded":
+			result["application/x-www-form-urlencoded"] = o.UrlformConsumer
 		}
 
 		if c, ok := o.customConsumers[mt]; ok {
@@ -267,7 +309,19 @@ func (o *FileUploadAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/upload-capped"] = uploads.NewUploadCappedFile(o.context, o.UploadsUploadCappedFileHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/upload"] = uploads.NewUploadFile(o.context, o.UploadsUploadFileHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/upload-multiple"] = uploads.NewUploadFiles(o.context, o.UploadsUploadFilesHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/urlencoded-form"] = uploads.NewUploadURLEncoded(o.context, o.UploadsUploadURLEncodedHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -28,3 +28,81 @@ paths:
       responses:
         "200":
           description: OK
+  /upload-capped:
+    post:
+      tags:
+      - uploads
+      summary: uploads
+      operationId: uploadCappedFile
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: file
+        in: formData
+        type: file
+        required: true
+        maxLength: 1024
+      responses:
+        "200":
+          description: OK
+  /upload-multiple:
+    post:
+      tags:
+      - uploads
+      summary: uploads
+      operationId: uploadFiles
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: desc
+        in: formData
+        required: true
+        type: string
+      - name: file1
+        in: formData
+        type: file
+        maxLength: 1024
+      - name: file2
+        in: formData
+        type: file
+        maxLength: 2048
+      - name: unlimitedFile
+        in: formData
+        type: file
+        minLength: 512
+      responses:
+        "200":
+          description: OK
+  /urlencoded-form:
+    post:
+      tags:
+      - uploads
+      summary: uploads
+      operationId: uploadURLEncoded
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: desc
+        in: formData
+        required: true
+        type: string
+      - name: count
+        in: formData
+        required: true
+        type: integer
+      - name: file1
+        in: formData
+        type: file
+        maxLength: 1024
+        required: true
+      - name: file2
+        in: formData
+        type: file
+        maxLength: 2048
+      - name: unlimitedFile
+        in: formData
+        type: file
+        minLength: 512
+      responses:
+        "200":
+          description: OK

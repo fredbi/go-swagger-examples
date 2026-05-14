@@ -56,6 +56,125 @@ func init() {
           }
         }
       }
+    },
+    "/upload-capped": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadCappedFile",
+        "parameters": [
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/upload-multiple": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadFiles",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "desc",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file1",
+            "in": "formData"
+          },
+          {
+            "maxLength": 2048,
+            "type": "file",
+            "name": "file2",
+            "in": "formData"
+          },
+          {
+            "minLength": 512,
+            "type": "file",
+            "name": "unlimitedFile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/urlencoded-form": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadURLEncoded",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "desc",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "count",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file1",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 2048,
+            "type": "file",
+            "name": "file2",
+            "in": "formData"
+          },
+          {
+            "minLength": 512,
+            "type": "file",
+            "name": "unlimitedFile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   }
 }`))
@@ -93,6 +212,125 @@ func init() {
             "name": "file",
             "in": "formData",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/upload-capped": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadCappedFile",
+        "parameters": [
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/upload-multiple": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadFiles",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "desc",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file1",
+            "in": "formData"
+          },
+          {
+            "maxLength": 2048,
+            "type": "file",
+            "name": "file2",
+            "in": "formData"
+          },
+          {
+            "minLength": 512,
+            "type": "file",
+            "name": "unlimitedFile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/urlencoded-form": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "tags": [
+          "uploads"
+        ],
+        "summary": "uploads",
+        "operationId": "uploadURLEncoded",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "desc",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "count",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 1024,
+            "type": "file",
+            "name": "file1",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "maxLength": 2048,
+            "type": "file",
+            "name": "file2",
+            "in": "formData"
+          },
+          {
+            "minLength": 512,
+            "type": "file",
+            "name": "unlimitedFile",
+            "in": "formData"
           }
         ],
         "responses": {
